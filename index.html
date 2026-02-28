@@ -1,39 +1,123 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Eligibility Checker</title>
+<meta charset="UTF-8">
+<title>Humans Mint Checker</title>
+
 <style>
-body {
-  background-color: #0f0f0f;
-  color: white;
-  font-family: Arial;
-  text-align: center;
-  padding-top: 100px;
+body{
+  margin:0;
+  font-family:Arial, sans-serif;
+  background:linear-gradient(135deg,#0f0f0f,#1c1c2e,#111);
+  color:white;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  min-height:100vh;
 }
-input {
-  padding: 10px;
-  width: 300px;
+
+.container{
+  background:rgba(255,255,255,0.05);
+  padding:40px;
+  border-radius:20px;
+  backdrop-filter:blur(20px);
+  box-shadow:0 0 40px rgba(0,255,153,0.15);
+  text-align:center;
+  width:420px;
 }
-button {
-  padding: 10px 20px;
-  background: #00ff99;
-  border: none;
-  cursor: pointer;
-  margin-top: 10px;
+
+h1{
+  margin-bottom:10px;
+  letter-spacing:2px;
+}
+
+input{
+  width:100%;
+  padding:14px;
+  border:none;
+  border-radius:8px;
+  margin-top:15px;
+  font-size:14px;
+}
+
+button{
+  width:100%;
+  padding:14px;
+  margin-top:15px;
+  border:none;
+  border-radius:8px;
+  background:#00ff99;
+  font-weight:bold;
+  cursor:pointer;
+  transition:0.3s;
+}
+
+button:hover{
+  background:#00cc77;
+  transform:scale(1.03);
+}
+
+#result{
+  margin-top:20px;
+  font-weight:bold;
+  font-size:18px;
+}
+
+.countdown-box{
+  margin-top:15px;
+  padding:10px;
+  border-radius:10px;
+  background:rgba(255,255,255,0.07);
+}
+
+.countdown-box p{
+  margin:0;
+  font-size:14px;
+  opacity:0.8;
+}
+
+.countdown-box div{
+  font-size:18px;
+  font-weight:bold;
+  color:#00ff99;
+  margin-top:5px;
 }
 </style>
 </head>
+
 <body>
 
-<h1>Humans Eligibility Checker</h1>
+<div class="container">
 
-<input type="text" id="wallet" placeholder="Enter your wallet address">
-<br>
-<button onclick="checkEligibility()">Check</button>
+<h1>HUMANS MINT</h1>
+
+<div class="countdown-box">
+  <p>🎟 GTD Mint</p>
+  <div id="gtdTimer"></div>
+</div>
+
+<div class="countdown-box">
+  <p>✅ WL Mint</p>
+  <div id="wlTimer"></div>
+</div>
+
+<div class="countdown-box">
+  <p>🌍 Public Mint</p>
+  <div id="publicTimer"></div>
+</div>
+
+<input type="text" id="wallet" placeholder="Enter Wallet Address">
+<button onclick="checkEligibility()">Check Eligibility</button>
 
 <p id="result"></p>
 
+</div>
+
 <script>
+
+//////////////////////////////////////////////////////
+// ⬇️ PASTE YOUR WL ADDRESSES HERE
+//////////////////////////////////////////////////////
 
 const whitelist = [
 "0xe89075e44617522e2d387de98763ba9fcf3001ab",
@@ -5822,6 +5906,10 @@ const whitelist = [
   "0x7c478cb24f4953e0eb1733d08a09df020538609f"
 ];
 
+//////////////////////////////////////////////////////
+// ⬇️ PASTE YOUR GTD ADDRESSES HERE
+//////////////////////////////////////////////////////
+
 const gtdlist = [
 "0xf1192bdf205b4783d2c3b9294604409058f2a468",
   "0xe9357a5cfba5ba9536d713ec320b9e79700c2d33",
@@ -6909,23 +6997,64 @@ const gtdlist = [
   "0x3704f1531f113f39f5daa68374e9277b808bcb65"
 ];
 
-function checkEligibility() {
-  const wallet = document.getElementById("wallet").value.trim().toLowerCase();
+//////////////////////////////////////////////////////
+
+function clean(addr){
+  return addr.trim().replace(/\s+/g,'').toLowerCase();
+}
+
+function checkEligibility(){
+  const wallet = clean(document.getElementById("wallet").value);
   const result = document.getElementById("result");
 
-  if (whitelist.map(w => w.toLowerCase()).includes(wallet)) {
-    result.innerHTML = "✅ You are Whitelisted!";
-    result.style.color = "#00ff99";
-  } 
-  else if (gtdlist.map(w => w.toLowerCase()).includes(wallet)) {
-    result.innerHTML = "🎟 You have GTD Spot!";
-    result.style.color = "#00ccff";
-  } 
-  else {
-    result.innerHTML = "❌ Not Eligible";
-    result.style.color = "red";
+  if(gtdlist.map(clean).includes(wallet)){
+    result.innerHTML="🎟 You have a GTD Spot!";
+    result.style.color="#00ccff";
+    return;
   }
+
+  if(whitelist.map(clean).includes(wallet)){
+    result.innerHTML="✅ You are Whitelisted!";
+    result.style.color="#00ff99";
+    return;
+  }
+
+  result.innerHTML="❌ Not Eligible";
+  result.style.color="red";
 }
+
+//////////////////////////////////////////////////////
+// 3 PHASE MINT TIMES (UTC)
+//////////////////////////////////////////////////////
+
+const gtdDate = new Date("March 4, 2026 15:00:00 UTC");
+const wlDate = new Date("March 4, 2026 16:00:00 UTC");
+const publicDate = new Date("March 4, 2026 17:00:00 UTC");
+
+function getTimeRemaining(date){
+  const now = new Date();
+  const diff = date - now;
+
+  if(diff <= 0){
+    return "🚀 LIVE";
+  }
+
+  const days = Math.floor(diff/(1000*60*60*24));
+  const hours = Math.floor((diff%(1000*60*60*24))/(1000*60*60));
+  const minutes = Math.floor((diff%(1000*60*60))/(1000*60));
+  const seconds = Math.floor((diff%(1000*60))/1000);
+
+  return `${days}d ${hours}h ${minutes}m ${seconds}s`;
+}
+
+function updateCountdown(){
+  document.getElementById("gtdTimer").innerHTML = getTimeRemaining(gtdDate);
+  document.getElementById("wlTimer").innerHTML = getTimeRemaining(wlDate);
+  document.getElementById("publicTimer").innerHTML = getTimeRemaining(publicDate);
+}
+
+setInterval(updateCountdown,1000);
+updateCountdown();
 
 </script>
 
