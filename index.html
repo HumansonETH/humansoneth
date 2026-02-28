@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Eligibility Checker</title>
+<style>
+body {
+  background-color: #0f0f0f;
+  color: white;
+  font-family: Arial;
+  text-align: center;
+  padding-top: 100px;
+}
+input {
+  padding: 10px;
+  width: 300px;
+}
+button {
+  padding: 10px 20px;
+  background: #00ff99;
+  border: none;
+  cursor: pointer;
+  margin-top: 10px;
+}
+</style>
+</head>
+<body>
+
+<h1>Humans Eligibility Checker</h1>
+
+<input type="text" id="wallet" placeholder="Enter your wallet address">
+<br>
+<button onclick="checkEligibility()">Check</button>
+
+<p id="result"></p>
+
+<script>
+const whitelist = [
+"0x123",
+"0x456",
+"0x789"
+];
+
+function checkEligibility() {
+  const wallet = document.getElementById("wallet").value;
+  if (whitelist.includes(wallet)) {
+    document.getElementById("result").innerHTML = "✅ You are Whitelisted!";
+  } else {
+    document.getElementById("result").innerHTML = "❌ Not Eligible";
+  }
+}
+</script>
+
+</body>
+</html>
